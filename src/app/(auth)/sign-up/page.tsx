@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDebounce } from 'usehooks-ts';
+
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -17,11 +17,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import {useDebounce, useDebounceCallback} from '@react-hook/debounce'
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signUpSchema } from '@/schemas/signUpSchema';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SignUpForm() {
   const [username, setUsername] = useState('');
@@ -118,7 +119,7 @@ export default function SignUpForm() {
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
-                      setUsername(e.target.value);
+                      debounced(e.target.value);
                     }}
                   />
                   {isCheckingUsername && <Loader2 className="animate-spin" />}
