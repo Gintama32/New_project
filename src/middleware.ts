@@ -7,7 +7,14 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request });
+  // Convert NextRequest to a compatible format
+  const token = await getToken({
+    req: {
+      cookies: request.cookies,
+      headers: request.headers,
+    },
+  } as any);  // casting to 'any' to satisfy the getToken requirement
+
   const url = request.nextUrl;
 
   // Redirect to dashboard if the user is already authenticated
