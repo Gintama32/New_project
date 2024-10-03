@@ -79,7 +79,7 @@ export default function SendMessage() {
       toast({
         title: 'Error',
         description:
-          axiosError.response?.data.message ?? 'Failed to sent message',
+          axiosError.response?.data.message ?? 'Failed to send message',
         variant: 'destructive',
       });
     } finally {
@@ -100,22 +100,27 @@ export default function SendMessage() {
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6 text-center">
+    <div className="container mx-auto my-8 p-6 bg-white rounded-lg shadow-md max-w-4xl">
+      <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
         Public Profile Link
       </h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 bg-gray-50 p-6 rounded-lg shadow-sm"
+        >
           <FormField
             control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Send Anonymous Message to @{username}</FormLabel>
+                <FormLabel className="text-lg font-semibold text-gray-700">
+                  Send Anonymous Message to @{username}
+                </FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Write your anonymous message here"
-                    className="resize-none"
+                    className="resize-none border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
                     {...field}
                   />
                 </FormControl>
@@ -123,14 +128,18 @@ export default function SendMessage() {
               </FormItem>
             )}
           />
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-4">
             {isLoading ? (
-              <Button disabled>
+              <Button disabled className="bg-indigo-500 hover:bg-indigo-600">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please wait
               </Button>
             ) : (
-              <Button type="submit" disabled={isLoading || !messageContent}>
+              <Button
+                type="submit"
+                disabled={isLoading || !messageContent}
+                className="bg-indigo-500 hover:bg-indigo-600"
+              >
                 Send It
               </Button>
             )}
@@ -142,18 +151,18 @@ export default function SendMessage() {
         <div className="space-y-2">
           <Button
             onClick={fetchSuggestedMessages}
-            className="my-4"
+            className="my-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
             disabled={isSuggestLoading}
           >
             Suggest Messages
           </Button>
-          <p>Click on any message below to select it.</p>
+          <p className="text-gray-700">Click on any message below to select it.</p>
         </div>
-        <Card>
-          <CardHeader>
-            <h3 className="text-xl font-semibold">Messages</h3>
+        <Card className="shadow-lg">
+          <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
+            <h3 className="text-xl font-semibold text-gray-800">Messages</h3>
           </CardHeader>
-          <CardContent className="flex flex-col space-y-4">
+          <CardContent className="flex flex-col space-y-4 p-4">
             {error ? (
               <p className="text-red-500">{error.message}</p>
             ) : (
@@ -161,7 +170,7 @@ export default function SendMessage() {
                 <Button
                   key={index}
                   variant="outline"
-                  className="mb-2"
+                  className="border-gray-300 hover:border-indigo-500 text-gray-700 hover:text-indigo-500 mb-2 rounded-lg"
                   onClick={() => handleMessageClick(message)}
                 >
                   {message}
@@ -173,9 +182,16 @@ export default function SendMessage() {
       </div>
       <Separator className="my-6" />
       <div className="text-center">
-        <div className="mb-4">Get Your Message Board</div>
+        <div className="mb-4 text-lg font-semibold text-gray-800">
+          Get Your Message Board
+        </div>
         <Link href={'/sign-up'}>
-          <Button onClick={handleCreateAccount}>Create Your Account</Button>
+          <Button
+            onClick={handleCreateAccount}
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+          >
+            Create Your Account
+          </Button>
         </Link>
       </div>
     </div>
