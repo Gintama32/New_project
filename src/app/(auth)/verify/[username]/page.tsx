@@ -26,11 +26,19 @@ export default function VerifyAccount() {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
+    defaultValues: {
+      code: ''
+    }
   });
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     try {
-      const response = await axios.post<ApiResponse>(`/api/verify-code`, {
+      console.log('Submitting verification:', {
+        username: params.username,
+        code: data.code
+      });
+      
+      const response = await axios.post<ApiResponse>('/api/verify-code/', {
         username: params.username,
         code: data.code,
       });
@@ -43,6 +51,11 @@ export default function VerifyAccount() {
       router.replace('/sign-in');
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
+      console.error('Verification error:', {
+        error: axiosError.response?.data,
+        status: axiosError.response?.status,
+        statusText: axiosError.response?.statusText
+      });
       toast({
         title: 'Verification Failed',
         description:

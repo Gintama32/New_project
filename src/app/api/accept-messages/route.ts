@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     // Update the user's message acceptance status
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
-      { isAcceptingMessages: acceptMessages },
+      { isAcceptingMessage: acceptMessages },
       { new: true }
     );
 

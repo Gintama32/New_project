@@ -4,9 +4,9 @@ import { Message } from '@/model/User';
 
 export async function POST(request: Request) {
   await dbConnect();
-  const { username, content } = await request.json();
-
+  
   try {
+    const { username, content } = await request.json();
     const user = await UserModel.findOne({ username }).exec();
 
     if (!user) {
@@ -19,23 +19,33 @@ export async function POST(request: Request) {
     // Check if the user is accepting messages
     if (!user.isAcceptingMessage) {
       return Response.json(
-        { message: 'User is not accepting messages', success: false },
+        { message: 'This user is not accepting messages at the moment', success: false },
         { status: 403 } // 403 Forbidden status
       );
     }
 
     const newMessage = { content, createdAt: new Date() };
 
-    // Push the new message to the user's messages array
-    user.messages.push(newMessage as Message);
-    await user.save();
+    // Use findOneAndUpdate to ensure atomicity and check isAcceptingMessage again
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: user._id, isAcceptingMessage: true },
+      { $push: { messages: newMessage } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return Response.json(
+        { message: 'This user is not accepting messages at the moment', success: false },
+        { status: 403 }
+      );
+    }
 
     return Response.json(
       { message: 'Message sent successfully', success: true },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error adding message:', error);
+    console.error('Error processing message:', error);
     return Response.json(
       { message: 'Internal server error', success: false },
       { status: 500 }

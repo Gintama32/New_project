@@ -1,5 +1,5 @@
 'use client';
-import Navbar from "@/components/navbar";
+
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
@@ -11,7 +11,19 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import messages from "@/messages.json"
+import { useSession } from 'next-auth/react';
+import { Loader2 } from 'lucide-react';
+
 export default function Home() {
+  const { status } = useSession();
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <>
     <main className = "flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12">

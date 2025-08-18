@@ -9,16 +9,17 @@ export async function POST(request: Request){
     try{
         const {username, email, password} = await request.json
         ()
-        const existingUserVerifiedByUsername = await 
-        UserModel.findOne({
-            username,
-            isVerified: true
-        })
-        if (existingUserVerifiedByUsername){
-            return Response.json({
-                success: false,
-                message: "Username already exists"
-            }, {status:400})
+        const existingUserByUsername = await UserModel.findOne({ username })
+        if (existingUserByUsername) {
+            if (existingUserByUsername.isVerified) {
+                return Response.json({
+                    success: false,
+                    message: "Username already exists"
+                }, { status: 400 })
+            } else {
+                // If username exists but not verified, delete the old unverified user
+                await UserModel.deleteOne({ _id: existingUserByUsername._id })
+            }
         }
         const existingUserByEmail = await UserModel.findOne
         ({email})
@@ -43,6 +44,7 @@ export async function POST(request: Request){
             const hashedPassword = await bcrypt.hash(password,10)
             const expiryDate = new Date()
             expiryDate.setHours(expiryDate.getHours()+1)
+            console.log('Creating new user with verification code:', verifyCode);
             const newUser = new UserModel({
                 username,
                 email,
@@ -55,12 +57,13 @@ export async function POST(request: Request){
             })
             await newUser.save()
         }
-        //send verification email
+        console.log('About to send verification email with code:', verifyCode);
         const emailResponse = await sendVerificationEmail(
             email,
             username,
             verifyCode
         )
+        console.log('Email sending response:', emailResponse);
         if(!emailResponse.success){
             return Response.json({
                 success: false,

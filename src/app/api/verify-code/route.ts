@@ -7,8 +7,13 @@ export async function POST(request: Request) {
 
   try {
     const { username, code } = await request.json();
+    console.log('Received verification request:', { username, code });
+    
     const decodedUsername = decodeURIComponent(username);
+    console.log('Looking for user:', { decodedUsername });
+    
     const user = await UserModel.findOne({ username: decodedUsername });
+    console.log('User found:', { found: !!user });
 
     if (!user) {
       return Response.json(
@@ -20,6 +25,16 @@ export async function POST(request: Request) {
     // Check if the code is correct and not expired
     const isCodeValid = user.verifyCode === code;
     const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
+    
+    // Debug logging
+    console.log('Verification attempt:', {
+        providedCode: code,
+        storedCode: user.verifyCode,
+        isCodeValid,
+        expiryTime: user.verifyCodeExpiry,
+        currentTime: new Date(),
+        isCodeNotExpired
+    });
 
     if (isCodeValid && isCodeNotExpired) {
       // Update the user's verification status
