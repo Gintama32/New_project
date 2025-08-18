@@ -1,18 +1,18 @@
-import nodemailer from 'nodemailer';
+import { createTransport } from 'nodemailer';
 
 // Create reusable transporter
-const transporter = nodemailer.createTransport({
+const transporter = createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_APP_PASSWORD,
+    user: process.env.EMAIL_USER || '',
+    pass: process.env.EMAIL_APP_PASSWORD || '',
   },
 });
 
 export async function sendEmail(to: string, subject: string, html: string) {
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER || '',
       to,
       subject,
       html,
