@@ -6,13 +6,16 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   // Get the token with the NEXTAUTH_SECRET
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: isProduction,
   });
 
-  console.log('Middleware token check:', !!token, 'Path:', request.nextUrl.pathname);
+  console.log('Middleware token check:', !!token, 'Path:', request.nextUrl.pathname, 'Environment:', process.env.NODE_ENV);
   
   const url = request.nextUrl;
 
