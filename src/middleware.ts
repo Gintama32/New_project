@@ -6,14 +6,14 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-  // Convert NextRequest to a compatible format
+  // Get the token with the NEXTAUTH_SECRET
   const token = await getToken({
-    req: {
-      cookies: request.cookies,
-      headers: request.headers,
-    },
-  } as any);  // casting to 'any' to satisfy the getToken requirement
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
+  console.log('Middleware token check:', !!token, 'Path:', request.nextUrl.pathname);
+  
   const url = request.nextUrl;
 
   // Redirect to dashboard if the user is already authenticated
